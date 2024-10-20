@@ -3,7 +3,19 @@
 #include "ray.h"
 #include "vec3.h"
 
+bool hitSphere(const Point3 &center, double radius, const Ray &ray) {
+  auto OC = center - ray.origin();
+  auto a = dot(ray.direction(), ray.direction());
+  auto b = -2 * dot(ray.direction(), OC);
+  auto c = dot(OC, OC) - radius * radius;
+  auto discriminant = b * b - 4 * a * c;
+  return discriminant >= 0;
+}
+
 Color getRayColor(const Ray &ray) {
+  if (hitSphere({0, 0, -1}, 0.5, ray)) {
+    return {1, 0, 0};
+  }
   Vec3 unitDirection = ray.direction().toUnitVector();
   auto a = 0.5 * (unitDirection.y() + 1);
   return (1 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
@@ -34,8 +46,8 @@ int main() {
   auto viewportU = Vec3(viewportWidth, 0, 0);
   auto viewportV = Vec3(0, -viewportHeight, 0);
 
-  auto pixelDeltaU = viewportU / viewportWidth;
-  auto pixelDeltaV = viewportV / viewportHeight;
+  auto pixelDeltaU = viewportU / width;
+  auto pixelDeltaV = viewportV / height;
 
   auto viewportUpperLeft =
       cameraCenter - Vec3(0, 0, focalLength) - viewportU / 2 - viewportV / 2;

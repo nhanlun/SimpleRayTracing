@@ -9,6 +9,7 @@ public:
       : origin_(std::move(origin)), dir_(std::move(dir)) {}
   Point3 at(double t) const { return origin_ + dir_ * t; }
   Vec3 direction() const { return dir_; }
+  Point3 origin() const { return origin_; }
 
 private:
   Point3 origin_;

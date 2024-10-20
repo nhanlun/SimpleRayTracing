@@ -90,6 +90,10 @@ inline auto operator/(const Vec3 &vec, double t) -> Vec3 {
   return res;
 }
 
+inline auto dot(const Vec3 &a, const Vec3 &b) -> double {
+  return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
+}
+
 using Point3 = Vec3;
 using Color = Vec3;
 
