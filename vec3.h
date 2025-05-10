@@ -26,6 +26,8 @@ public:
     return *this;
   }
 
+  auto operator-() const -> Vec3 { return Vec3(-x_, -y_, -z_); }
+
   auto operator*=(const double t) -> Vec3 & {
     x_ *= t;
     y_ *= t;

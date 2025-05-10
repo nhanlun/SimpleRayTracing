@@ -1,21 +1,48 @@
 #include <iostream>
+#include <memory>
 
+#include "constants.h"
+#include "hittable.h"
+#include "hittableList.h"
 #include "ray.h"
+#include "sphere.h"
 #include "vec3.h"
 
-bool hitSphere(const Point3 &center, double radius, const Ray &ray) {
+/*
+sphere equation: (x_c - x)^2 + (y_c - y)^2 + (z_c - z)^2 = r^2
+<-> (C - O) . (C - O) = r^2
+<-> (O - C) . (O - C) = r^2
+<-> (O - (P + at)) . (O - (P + at)) = r^2     # "P" is ray's origin, "a" is
+direction
+<-> (at + (O - P)) . (at + (O - P)) = r^2
+<-> (t^2) * a.a - 2at . (O - P) + (O - P) . (O - P) = r^2
+=> quadratic equation with variable "t"
+=> we can solve for t
+a = a.a
+b = 2a . (O - P) / 2 = a . (O - P)
+c = (O - P) . (O - P) - r^2
+
+delta' = b^2 - ac
+*/
+auto hitSphere(const Point3 &center, double radius, const Ray &ray) -> double {
   auto OC = center - ray.origin();
-  auto a = dot(ray.direction(), ray.direction());
-  auto b = -2 * dot(ray.direction(), OC);
+  auto a = ray.direction().lengthSquared();
+  auto b = dot(ray.direction(), OC);
   auto c = dot(OC, OC) - radius * radius;
-  auto discriminant = b * b - 4 * a * c;
-  return discriminant >= 0;
+  auto discriminant = b * b - a * c;
+
+  if (discriminant < 0) {
+    return -1;
+  }
+  // temporary choose the result nearer to the camera
+  return (b - sqrt(discriminant)) / a;
 }
 
-Color getRayColor(const Ray &ray) {
-  if (hitSphere({0, 0, -1}, 0.5, ray)) {
-    return {1, 0, 0};
+auto getRayColor(const Ray &ray, const Hittable &world) -> Color {
+  if (auto hitRecord = world.hit(ray, 0.0, kInfinity)) {
+    return 0.5 * Color(hitRecord->normal + Color(1, 1, 1));
   }
+
   Vec3 unitDirection = ray.direction().toUnitVector();
   auto a = 0.5 * (unitDirection.y() + 1);
   return (1 - a) * Color(1.0, 1.0, 1.0) + a * Color(0.5, 0.7, 1.0);
@@ -37,6 +64,10 @@ int main() {
   double ratio = 16.0 / 9.0;
   int width = 400;
   int height = std::max(int(width / ratio), 1);
+
+  HittableList world;
+  world.add(std::make_shared<Sphere>(Point3(0, 0, -1), 0.5));
+  world.add(std::make_shared<Sphere>(Point3(0, -100.5, -1), 100));
 
   auto focalLength = 1.0;
   auto viewportHeight = 2.0;
@@ -60,7 +91,7 @@ int main() {
       auto pixelCenter = pixel00Location + i * pixelDeltaV + j * pixelDeltaU;
       auto rayDirection = pixelCenter - cameraCenter;
       Ray ray{cameraCenter, rayDirection};
-      auto rayColor = getRayColor(ray);
+      auto rayColor = getRayColor(ray, world);
       writeColor(std::cout, rayColor);
     }
   }
