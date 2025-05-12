@@ -1,5 +1,6 @@
 #pragma once
 
+#include "interval.h"
 #include "ray.h"
 #include "vec3.h"
 
@@ -17,6 +18,6 @@ struct HitRecord {
 class Hittable {
 public:
   virtual ~Hittable() = default;
-  virtual auto hit(const Ray &ray, double rayTMin,
-                   double rayTMax) const -> std::optional<HitRecord> = 0;
+  virtual auto hit(const Ray &ray,
+                   const Interval &rayT) const -> std::optional<HitRecord> = 0;
 };

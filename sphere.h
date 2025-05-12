@@ -5,8 +5,8 @@
 class Sphere : public Hittable {
 public:
   Sphere(Point3 center, double radius);
-  auto hit(const Ray &ray, double rayTMin,
-           double rayTMax) const -> std::optional<HitRecord> override;
+  auto hit(const Ray &ray,
+           const Interval &rayT) const -> std::optional<HitRecord> override;
 
 private:
   Point3 center_;

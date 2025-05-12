@@ -3,8 +3,8 @@
 Sphere::Sphere(Point3 center, double radius)
     : center_(std::move(center)), radius_(std::fmax(0, radius)) {}
 
-auto Sphere::hit(const Ray &ray, double rayTMin,
-                 double rayTMax) const -> std::optional<HitRecord> {
+auto Sphere::hit(const Ray &ray,
+                 const Interval &rayT) const -> std::optional<HitRecord> {
   auto OC = center_ - ray.origin();
   auto a = ray.direction().lengthSquared();
   auto b = dot(ray.direction(), OC);
@@ -17,9 +17,9 @@ auto Sphere::hit(const Ray &ray, double rayTMin,
   // temporary choose the result nearer to the camera
   auto sqrtd = sqrt(discriminant);
   auto root = (b - sqrtd) / a;
-  if (root <= rayTMin or root >= rayTMax) {
+  if (!rayT.surrounds(root)) {
     root = (b + sqrtd) / a;
-    if (root <= rayTMin or root >= rayTMax) {
+    if (!rayT.surrounds(root)) {
       return std::nullopt;
     }
   }

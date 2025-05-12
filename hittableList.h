@@ -15,8 +15,8 @@ public:
 
   void clear() { objects_.clear(); }
 
-  auto hit(const Ray &ray, double rayTMin,
-           double rayTMax) const -> std::optional<HitRecord> override;
+  auto hit(const Ray &ray,
+           const Interval &rayT) const -> std::optional<HitRecord> override;
 
 private:
   std::vector<std::shared_ptr<Hittable>> objects_;
