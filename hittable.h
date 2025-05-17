@@ -6,6 +6,8 @@
 
 #include <optional>
 
+namespace rt {
+
 struct HitRecord {
   Point3 p;
   Vec3 normal;
@@ -21,3 +23,5 @@ public:
   virtual auto hit(const Ray &ray,
                    const Interval &rayT) const -> std::optional<HitRecord> = 0;
 };
+
+} // namespace rt

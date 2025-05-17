@@ -1,5 +1,7 @@
 #include "hittableList.h"
 
+namespace rt {
+
 auto HittableList::hit(const Ray &ray,
                        const Interval &rayT) const -> std::optional<HitRecord> {
   HitRecord tempRec;
@@ -15,3 +17,4 @@ auto HittableList::hit(const Ray &ray,
 
   return hitRecord;
 }
+} // namespace rt

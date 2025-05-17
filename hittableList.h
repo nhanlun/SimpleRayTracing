@@ -5,6 +5,8 @@
 #include <memory>
 #include <vector>
 
+namespace rt {
+
 class HittableList : public Hittable {
 public:
   HittableList() = default;
@@ -21,3 +23,5 @@ public:
 private:
   std::vector<std::shared_ptr<Hittable>> objects_;
 };
+
+} // namespace rt

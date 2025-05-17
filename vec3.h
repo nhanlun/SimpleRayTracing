@@ -97,6 +97,5 @@ inline auto dot(const Vec3 &a, const Vec3 &b) -> double {
 }
 
 using Point3 = Vec3;
-using Color = Vec3;
 
 #endif

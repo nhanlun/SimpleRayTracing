@@ -1,5 +1,7 @@
 #include "sphere.h"
 
+namespace rt {
+
 Sphere::Sphere(Point3 center, double radius)
     : center_(std::move(center)), radius_(std::fmax(0, radius)) {}
 
@@ -32,3 +34,4 @@ auto Sphere::hit(const Ray &ray,
 
   return result;
 }
+} // namespace rt
