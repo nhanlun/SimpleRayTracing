@@ -1,8 +1,12 @@
 #ifndef VEC3_H
 #define VEC3_H
 
+#include "utils.h"
 #include <cmath>
 #include <ostream>
+
+namespace rt {
+
 class Vec3 {
 public:
   Vec3() = default;
@@ -53,6 +57,16 @@ public:
 
   friend std::ostream &operator<<(std::ostream &os, const Vec3 &vec);
 
+  static auto random() -> Vec3 {
+    return Vec3(utils::randomDouble(), utils::randomDouble(),
+                utils::randomDouble());
+  }
+
+  static auto random(double min, double max) -> Vec3 {
+    return Vec3(utils::randomDouble(min, max), utils::randomDouble(min, max),
+                utils::randomDouble(min, max));
+  }
+
 private:
   double x_{0}, y_{0}, z_{0};
 };
@@ -96,6 +110,31 @@ inline auto dot(const Vec3 &a, const Vec3 &b) -> double {
   return a.x() * b.x() + a.y() * b.y() + a.z() * b.z();
 }
 
+inline auto randomUnitVector() -> Vec3 {
+  // Generate a random point on the unit sphere
+  while (true) {
+    auto p = Vec3::random(-1, 1);
+    // Using lengthSquared to avoid taking sqrt for performance
+    auto lengthSquared = p.lengthSquared();
+    if (1e-160 < lengthSquared && lengthSquared < 1) {
+      return p / std::sqrt(lengthSquared);
+    }
+  }
+}
+
+inline auto randomOnHemisphere(const Vec3 &normal) -> Vec3 {
+  // Generate a random point on the unit sphere
+  auto p = randomUnitVector();
+  // Check if the point is in the hemisphere defined by the normal
+  if (dot(p, normal) > 0.0) {
+    return p;
+  } else {
+    return -p; // Reflect it to the other side
+  }
+}
+
 using Point3 = Vec3;
+
+} // namespace rt
 
 #endif

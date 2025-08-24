@@ -3,6 +3,9 @@
 
 #include "vec3.h"
 #include <utility>
+
+namespace rt {
+
 class Ray {
 public:
   Ray(Point3 origin, Vec3 dir)
@@ -15,5 +18,7 @@ private:
   Point3 origin_;
   Vec3 dir_;
 };
+
+} // namespace rt
 
 #endif

@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "ray.h"
 #include "utils.h"
+#include "vec3.h"
 
 namespace rt {
 void Camera::render(const Hittable &world) {
@@ -18,7 +19,7 @@ void Camera::render(const Hittable &world) {
       Color pixelColor(0, 0, 0);
       for (int sample = 0; sample < samplesPerPixel_; ++sample) {
         Ray ray = getRay(j, i);
-        pixelColor += getRayColor(ray, world);
+        pixelColor += getRayColor(ray, maxDepth_, world);
       }
       color::writeColor(std::cout, pixelColor * pixelSampleScale_);
     }
@@ -57,9 +58,14 @@ auto Camera::sampleSquare() const -> Vec3 {
   return Vec3(utils::randomDouble() - 0.5, utils::randomDouble() - 0.5, 0);
 }
 
-auto Camera::getRayColor(const Ray &ray, const Hittable &world) -> Color {
-  if (auto hitRecord = world.hit(ray, {0.0, kInfinity})) {
-    return 0.5 * Color(hitRecord->normal + Color(1, 1, 1));
+auto Camera::getRayColor(const Ray &ray, int depth,
+                         const Hittable &world) -> Color {
+  if (depth <= 0) {
+    return Color(0, 0, 0); // Return black for max depth
+  }
+  if (auto hitRecord = world.hit(ray, {0.0001, kInfinity})) {
+    auto direction = hitRecord->normal + randomUnitVector();
+    return 0.5 * getRayColor(Ray(hitRecord->p, direction), depth - 1, world);
   }
 
   Vec3 unitDirection = ray.direction().toUnitVector();

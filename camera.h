@@ -9,6 +9,7 @@ namespace rt {
 class Camera {
 public:
   void render(const Hittable &world);
+  Camera() = default;
 
 private:
   using Color = color::Color;
@@ -21,10 +22,12 @@ private:
   Vec3 pixelDeltaV_;
   int samplesPerPixel_ = 100;
   double pixelSampleScale_;
+  int maxDepth_ = 50;
 
   void initialize();
   auto getRay(int i, int j) const -> Ray;
   auto sampleSquare() const -> Vec3;
-  auto getRayColor(const Ray &ray, const Hittable &world) -> color::Color;
+  auto getRayColor(const Ray &ray, int depth,
+                   const Hittable &world) -> color::Color;
 };
 } // namespace rt
